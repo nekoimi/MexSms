@@ -15,6 +15,8 @@
  * #    「 涙の雨が頬をたたくたびに美しく 」
  **/
 namespace MexSms\Gateways;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use MexSms\Contracts\MessageInterface;
 use MexSms\Gateway;
 use MexSms\Support\Config;
@@ -61,16 +63,26 @@ class AliyunGateway extends AbstractGateway
 
         $params['Signature'] = $this->generateSign($params);
 
-        $result = $this->doGet(self::SMS_API, $params);
+        try{
+            $result = $this->doGet(self::SMS_API, $params);
+            if ('OK' != $result['Code']) {
+                app('log')->error(__CLASS__ . " : 短信发送失败! [ $toPhoneNumber ]  ===> Code : {$result['Code']}  Des: [ {$result['Message']} ] ");
+                return false;
+            }
 
-        if ('OK' != $result['Code']) {
-            app('log')->error(__CLASS__ . " : 短信发送失败! [ $toPhoneNumber ]  ===> Code : {$result['Code']}  Des: [ {$result['Message']} ] ");
+            app('log')->info(__CLASS__ . " : 短信发送成功! [ $toPhoneNumber ] ");
+
+            return true;
+        }catch (ClientException $ex) {
+            $statusCode     =   $ex->getResponse()->getStatusCode();
+            $reasonPhrase   =   $ex->getResponse()->getReasonPhrase();
+            app('log')->error(__CLASS__ . " : 短信发送失败! [ {$toPhoneNumber} ] 状态码 : {$statusCode} ; 错误信息 : {$reasonPhrase} ");
+            return false;
+        }catch (GuzzleException $ex) {
+            $reasonPhrase = $ex->getTraceAsString();
+            app('log')->error(__CLASS__ . ": 短信发送失败! [ {$toPhoneNumber} ] 错误信息 : {$reasonPhrase} ");
             return false;
         }
-
-        app('log')->info(__CLASS__ . " : 短信发送成功! [ $toPhoneNumber ] ");
-
-        return true;
     }
 
     /**
@@ -91,4 +103,15 @@ class AliyunGateway extends AbstractGateway
         return base64_encode(hash_hmac('sha1', $stringToSign, $accessKeySecret.'&', true));
     }
 
+    /**
+     *
+     * @param string $phoneNumber
+     * @param $smsCode
+     * @param Config $config
+     * @return bool
+     */
+    public function verify(string $phoneNumber, $smsCode, Config $config): bool
+    {
+        return false;
+    }
 }

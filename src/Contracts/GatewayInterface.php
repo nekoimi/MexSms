@@ -31,7 +31,6 @@ interface GatewayInterface
      */
     public function getName(): string ;
 
-
     /**
      *
      * @param string $toPhoneNumber
@@ -40,5 +39,15 @@ interface GatewayInterface
      * @return bool
      */
     public function send(string $toPhoneNumber, MessageInterface $message, Config $config) : bool ;
+
+
+    /**
+     *
+     * @param string $phoneNumber
+     * @param $smsCode
+     * @param Config $config
+     * @return bool
+     */
+    public function verify(string $phoneNumber, $smsCode, Config $config): bool ;
 
 }

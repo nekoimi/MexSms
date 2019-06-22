@@ -16,6 +16,7 @@
  **/
 namespace MexSms;
 use MexSms\Contracts\GatewayInterface;
+use MexSms\Exceptions\GatewayErrorException;
 use MexSms\Support\Config;
 use MexSms\Support\Message;
 use MexSms\Traits\HelperTrait;
@@ -28,6 +29,12 @@ use MexSms\Traits\HelperTrait;
 class MexSms
 {
     use HelperTrait;
+
+    /**
+     * 允许使用的短信平台
+     * @var array
+     */
+    protected $allows = [];
 
     /**
      * Gateway List
@@ -46,17 +53,15 @@ class MexSms
     public function send(string $toPhoneNumber, int $smsCode = -1) {
         self::checkPhoneNumber($toPhoneNumber);
 
-        $config = new Config(
-            app('config')->get('mexsms')
-        );
+        $config = $this->getConfig();
 
-        $allows = self::formatGateways($config);
+        $this->formatGateways($config);
 
         $message = new Message(array(
             'code'  =>  $smsCode
         ));
 
-        foreach ($allows as $allow) {
+        foreach ($this->allows as $allow) {
             /**@var GatewayInterface $gateway*/
             $gateway = app($allow);
             $gateway->setConfig($config);
@@ -69,8 +74,37 @@ class MexSms
 
     /**
      *
+     * @param string $gatewayName
+     * @param string $phoneNumber
+     * @param $smsCode
+     * @return bool
+     * @throws Exceptions\MobileIllegalException
+     * @throws GatewayErrorException
+     */
+    public function verify(string $gatewayName, string $phoneNumber, $smsCode) {
+        self::checkPhoneNumber($phoneNumber);
+
+        $config = $this->getConfig();
+
+        $this->formatGateways($config);
+
+        if (!in_array($gatewayName, array_keys(self::$gateways))) {
+            throw new GatewayErrorException();
+        }
+
+        /**@var GatewayInterface $gateway*/
+        $gateway = app(self::$gateways[$gatewayName]);
+        $gateway->setConfig($config);
+        if (method_exists($gateway, 'verify')) {
+            return $gateway->verify($phoneNumber, strval($smsCode), $config);
+        }
+
+        return false;
+    }
+
+    /**
+     *
      * @param Config $config
-     * @return array
      */
     protected function formatGateways(Config $config) {
         $gateways = $config->get('gateways');
@@ -80,7 +114,18 @@ class MexSms
                 $allows[] = self::$gateways[$gatewayName];
             }
         });
-        return $allows;
+        $this->allows = $allows;
+    }
+
+
+    /**
+     *
+     * @return Config
+     */
+    protected function getConfig() {
+        return new Config(
+            app('config')->get('mexsms')
+        );
     }
 
 }
