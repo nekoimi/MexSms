@@ -36,9 +36,9 @@ interface GatewayInterface
      * @param string $toPhoneNumber
      * @param MessageInterface $message
      * @param Config $config
-     * @return bool
+     * @return bool|string
      */
-    public function send(string $toPhoneNumber, MessageInterface $message, Config $config) : bool ;
+    public function send(string $toPhoneNumber, MessageInterface $message, Config $config);
 
 
     /**

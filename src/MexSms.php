@@ -48,6 +48,7 @@ class MexSms
     /**
      * @param string $toPhoneNumber
      * @param int $smsCode
+     * @return bool|string
      * @throws Exceptions\MobileIllegalException
      */
     public function send(string $toPhoneNumber, int $smsCode = -1) {
@@ -65,10 +66,13 @@ class MexSms
             /**@var GatewayInterface $gateway*/
             $gateway = app($allow);
             $gateway->setConfig($config);
-            if ($gateway->send($toPhoneNumber, $message, $config)){
-                break;
+            $sendResult = $gateway->send($toPhoneNumber, $message, $config);
+            if (false !== $sendResult){
+                return $sendResult;
             }
         }
+
+        return false;
     }
 
 

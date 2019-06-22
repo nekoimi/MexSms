@@ -37,9 +37,9 @@ class AliyunGateway extends AbstractGateway
      * @param string $toPhoneNumber
      * @param MessageInterface $message
      * @param Config $config
-     * @return bool
+     * @return bool|string
      */
-    public function send(string $toPhoneNumber, MessageInterface $message, Config $config) : bool
+    public function send(string $toPhoneNumber, MessageInterface $message, Config $config)
     {
         $templateData = $message->getTemplateDate($this);
 
@@ -72,7 +72,7 @@ class AliyunGateway extends AbstractGateway
 
             app('log')->info(__CLASS__ . " : 短信发送成功! [ $toPhoneNumber ] ");
 
-            return true;
+            return $this->getName();
         }catch (ClientException $ex) {
             $statusCode     =   $ex->getResponse()->getStatusCode();
             $reasonPhrase   =   $ex->getResponse()->getReasonPhrase();

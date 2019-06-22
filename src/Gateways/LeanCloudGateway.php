@@ -33,9 +33,9 @@ class LeanCloudGateway extends AbstractGateway
      * @param string $toPhoneNumber
      * @param MessageInterface $message
      * @param Config $config
-     * @return bool
+     * @return bool|string
      */
-    public function send(string $toPhoneNumber, MessageInterface $message, Config $config): bool
+    public function send(string $toPhoneNumber, MessageInterface $message, Config $config)
     {
         $request_uri = $this->formatRequestApi($config);
         $params = $this->formatParams($toPhoneNumber, $config);
@@ -43,7 +43,7 @@ class LeanCloudGateway extends AbstractGateway
             $result = $this->doPost($request_uri, $params);
             app('log')->info(var_export($result, true));
             app('log')->info(__CLASS__ . " : 短信发送成功! [ $toPhoneNumber ] ");
-            return true;
+            return $this->getName();
         }catch (ClientException $ex) {
             $statusCode     =   $ex->getResponse()->getStatusCode();
             $reasonPhrase   =   $ex->getResponse()->getReasonPhrase();
