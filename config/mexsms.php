@@ -17,8 +17,11 @@
 
 return array(
 
+    // Max Limit
+    // 'max_limit' => env('SMS_MAX_LIMIT', 5),
+
     // request timeout
-    'timeout' => 5,
+    'timeout' => env('SMS_TIMEOUT', 5),
 
     // 允许使用的短信平台列表 按照顺序来
     'gateways'  =>  [
