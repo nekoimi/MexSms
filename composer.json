@@ -1,0 +1,30 @@
+{
+    "name": "yprisoner/mexsms",
+    "description": "This is a quick package for using SMS",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.0",
+        "guzzlehttp/guzzle": "^6.3@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.3@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "MexSms\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MexSms\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "yprisoner",
+            "email": "yyprisoner@gmail.com"
+        }
+    ]
+}
