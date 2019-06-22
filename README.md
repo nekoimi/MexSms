@@ -1,11 +1,5 @@
 # MexSms —— Laravel / Lumen
 
-LeanCloud 挂了。。。。。所有的短信业务都用不了了....
-
-加一个阿里备用...
-
-LeanCloud 和 阿里云的短信验证有很大的区别...
-
 目前支持的短信服务:
 
 - 阿里云
@@ -47,7 +41,12 @@ $app->register(MexSms\Providers\MexsmsServiceProvider::class);
 
 ```php
 // 发送短信验证码
-app('mexsms')->send('17300000000', '233233');
+$result = app('mexsms')->send('17300000000', '233233');
+if (false === $result) {
+    // 发送短信失败
+    return;
+}
+echo $result . PHP_EOL;  // 运营商名称
 // 指定 LeanCloud 短信平台 验证短信验证码
 $bool = app('mexsms')->verify(\MexSms\Gateway::SMS_LEANCLOUD, '17300000000', '233233');
 if ($bool) {
