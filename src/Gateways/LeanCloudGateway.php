@@ -41,8 +41,8 @@ class LeanCloudGateway extends AbstractGateway
         $params = $this->formatParams($toPhoneNumber, $config);
         try{
             $result = $this->doPost($request_uri, $params);
-            app('log')->info(var_export($result, true));
-            app('log')->info(__CLASS__ . " : 短信发送成功! [ $toPhoneNumber ] ");
+            app('log')->debug(var_export($result, true));
+            app('log')->debug(__CLASS__ . " : 短信发送成功! [ $toPhoneNumber ] ");
             return $this->getName();
         }catch (ClientException $ex) {
             $statusCode     =   $ex->getResponse()->getStatusCode();
@@ -76,8 +76,8 @@ class LeanCloudGateway extends AbstractGateway
 
         try{
             $result = $this->doPost($request_uri, $params);
-            app('log')->info(var_export($result, true));
-            app('log')->info(__CLASS__ . " : 短信验证成功! [ $phoneNumber ] ");
+            app('log')->debug(var_export($result, true));
+            app('log')->debug(__CLASS__ . " : 短信验证成功! [ $phoneNumber ] ");
             return true;
         }catch (ClientException $ex) {
             $statusCode     =   $ex->getResponse()->getStatusCode();

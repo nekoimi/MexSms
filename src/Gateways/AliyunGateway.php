@@ -18,6 +18,8 @@ namespace MexSms\Gateways;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use MexSms\Contracts\MessageInterface;
+use MexSms\Contracts\SmsVerifyInterface;
+use MexSms\Exceptions\VerifyHandlerNotExistsException;
 use MexSms\Gateway;
 use MexSms\Support\Config;
 /**
@@ -70,7 +72,7 @@ class AliyunGateway extends AbstractGateway
                 return false;
             }
 
-            app('log')->info(__CLASS__ . " : 短信发送成功! [ $toPhoneNumber ] ");
+            app('log')->debug(__CLASS__ . " : 短信发送成功! [ $toPhoneNumber ] ");
 
             return $this->getName();
         }catch (ClientException $ex) {
@@ -109,9 +111,18 @@ class AliyunGateway extends AbstractGateway
      * @param $smsCode
      * @param Config $config
      * @return bool
+     * @throws VerifyHandlerNotExistsException
      */
     public function verify(string $phoneNumber, $smsCode, Config $config): bool
     {
-        return false;
+        $verifyHandler = app(
+            $config->get($this->getName() . '.verify_handler')
+        );
+
+        if (! $verifyHandler instanceof SmsVerifyInterface) {
+            throw new VerifyHandlerNotExistsException();
+        }
+
+        return $verifyHandler->verify($phoneNumber, $smsCode, $config);
     }
 }

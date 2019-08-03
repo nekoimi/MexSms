@@ -40,14 +40,4 @@ interface GatewayInterface
      */
     public function send(string $toPhoneNumber, MessageInterface $message, Config $config);
 
-
-    /**
-     *
-     * @param string $phoneNumber
-     * @param $smsCode
-     * @param Config $config
-     * @return bool
-     */
-    public function verify(string $phoneNumber, $smsCode, Config $config): bool ;
-
 }

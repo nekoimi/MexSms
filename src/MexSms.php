@@ -86,15 +86,14 @@ class MexSms
      * @throws GatewayErrorException
      */
     public function verify(string $gatewayName, string $phoneNumber, $smsCode) {
+        if (!in_array($gatewayName, array_keys(self::$gateways))) {
+            throw new GatewayErrorException();
+        }
         self::checkPhoneNumber($phoneNumber);
 
         $config = $this->getConfig();
 
         $this->formatGateways($config);
-
-        if (!in_array($gatewayName, array_keys(self::$gateways))) {
-            throw new GatewayErrorException();
-        }
 
         /**@var GatewayInterface $gateway*/
         $gateway = app(self::$gateways[$gatewayName]);

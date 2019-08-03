@@ -42,6 +42,7 @@ return array(
         'access_key_id'     =>  env('MEXSMS_ALIYUN_ACCESS_KEY_ID', ''),
         'access_key_secret' =>  env('MEXSMS_ALIYUN_ACCESS_KEY_SECRET', ''),
         'template_code'     =>  env('MEXSMS_ALIYUN_TEMPLATE_CODE', ''),
+        'verify_handler'    =>  null,  // Verify Class
     ],
 
 
