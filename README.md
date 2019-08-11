@@ -41,14 +41,14 @@ $app->register(MexSms\Providers\MexsmsServiceProvider::class);
 
 ```php
 // 发送短信验证码
-$result = app('mexsms')->send('17300000000', '233233');
+$result = mexsms()->send('17300000000', '233233');
 if (false === $result) {
     // 发送短信失败
     return;
 }
 echo $result . PHP_EOL;  // 运营商名称
 // 指定 LeanCloud 短信平台 验证短信验证码
-$bool = app('mexsms')->verify(\MexSms\Gateway::SMS_LEANCLOUD, '17300000000', '233233');
+$bool = mexsms()->verify(\MexSms\Gateway::SMS_LEANCLOUD, '17300000000', '233233');
 if ($bool) {
     // 验证成功.
 } else {

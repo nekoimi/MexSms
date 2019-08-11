@@ -31,13 +31,5 @@ interface GatewayInterface
      */
     public function getName(): string ;
 
-    /**
-     *
-     * @param string $toPhoneNumber
-     * @param MessageInterface $message
-     * @param Config $config
-     * @return bool|string
-     */
-    public function send(string $toPhoneNumber, MessageInterface $message, Config $config);
 
 }

@@ -16,6 +16,7 @@
  **/
 namespace MexSms\Gateways;
 use MexSms\Contracts\GatewayInterface;
+use MexSms\Contracts\SmsSendInterface;
 use MexSms\Contracts\SmsVerifyInterface;
 use MexSms\Support\Config;
 use MexSms\Traits\HttpRequestTrait;
@@ -24,7 +25,7 @@ use MexSms\Traits\HttpRequestTrait;
  *
  * @package MexSms\Gateways
  */
-abstract class AbstractGateway implements GatewayInterface, SmsVerifyInterface
+abstract class AbstractGateway implements GatewayInterface, SmsSendInterface, SmsVerifyInterface
 {
     use HttpRequestTrait;
 
