@@ -42,7 +42,21 @@ return array(
         'access_key_id'     =>  env('MEXSMS_ALIYUN_ACCESS_KEY_ID', ''),
         'access_key_secret' =>  env('MEXSMS_ALIYUN_ACCESS_KEY_SECRET', ''),
         'template_code'     =>  env('MEXSMS_ALIYUN_TEMPLATE_CODE', ''),
-        'verify_handler'    =>  null,  // Verify Class
+        'verify_handler'    =>  new class implements \MexSms\Contracts\SmsVerifyInterface {
+            /**
+             * 自己实现该接口
+             * 如果发信网关是aliyun 验证短信会回调该接口
+             *
+             * @param string $phoneNumber
+             * @param $smsCode
+             * @param \MexSms\Support\Config $config
+             * @return bool
+             */
+            public function verify(string $phoneNumber, $smsCode, \MexSms\Support\Config $config): bool {
+                // TODO: Implement verify() method.
+                return false;
+            }
+        },
     ],
 
 

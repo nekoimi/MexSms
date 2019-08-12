@@ -16,6 +16,8 @@
  **/
 namespace MexSms;
 use MexSms\Contracts\GatewayInterface;
+use MexSms\Contracts\SmsSendInterface;
+use MexSms\Contracts\SmsVerifyInterface;
 use MexSms\Exceptions\GatewayErrorException;
 use MexSms\Support\Config;
 use MexSms\Support\Message;
@@ -63,7 +65,7 @@ class MexSms
         ));
 
         foreach ($this->allows as $allow) {
-            /**@var GatewayInterface $gateway*/
+            /**@var GatewayInterface|SmsSendInterface $gateway*/
             $gateway = app($allow);
             $gateway->setConfig($config);
             $sendResult = $gateway->send($toPhoneNumber, $message, $config);
@@ -95,7 +97,7 @@ class MexSms
 
         $this->formatGateways($config);
 
-        /**@var GatewayInterface $gateway*/
+        /**@var GatewayInterface|SmsVerifyInterface $gateway*/
         $gateway = app(self::$gateways[$gatewayName]);
         $gateway->setConfig($config);
         if (method_exists($gateway, 'verify')) {

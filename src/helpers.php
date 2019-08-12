@@ -9,7 +9,7 @@
 if (! function_exists('maxsms')) {
 
     /**
-     * @return \MexSms\Contracts\SmsSendInterface|\MexSms\Contracts\SmsVerifyInterface
+     * @return \MexSms\MexSms
      */
     function mexsms() {
         return app('mexsms');
