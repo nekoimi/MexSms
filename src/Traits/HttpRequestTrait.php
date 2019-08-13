@@ -74,7 +74,7 @@ trait HttpRequestTrait
         return $this->clearResponse(
             $this->newClient(
                 $this->getDefaultOptions()
-            )->{$method}($request_uri, $options)
+            )->{strtolower($method)}($request_uri, $options)
         );
     }
 
