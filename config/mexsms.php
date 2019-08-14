@@ -18,7 +18,7 @@
 return array(
 
     // Max Limit
-    // 'max_limit' => env('SMS_MAX_LIMIT', 5),
+    'max_limit' => env('SMS_MAX_LIMIT'),
 
     // request timeout
     'timeout' => env('SMS_TIMEOUT', 5),
@@ -59,5 +59,35 @@ return array(
         },
     ],
 
+
+    // 日志Handler
+    'log_handler'   =>  new class implements \MexSms\Contracts\LogHandlerInterface {
+        /**
+         * Debug
+         *
+         * @param string $log
+         */
+        public function debug(string $log) {
+            // TODO: Implement debug() method.
+        }
+
+        /**
+         * Info
+         *
+         * @param string $log
+         */
+        public function info(string $log) {
+            // TODO: Implement info() method.
+        }
+
+        /**
+         * Error
+         *
+         * @param string $log
+         */
+        public function error(string $log) {
+            // TODO: Implement error() method.
+        }
+    }
 
 );

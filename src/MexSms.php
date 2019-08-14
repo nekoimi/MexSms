@@ -14,12 +14,15 @@
  * #                            ------
  * #    「 涙の雨が頬をたたくたびに美しく 」
  **/
+
 namespace MexSms;
+
 use MexSms\Contracts\GatewayInterface;
 use MexSms\Contracts\SmsSendInterface;
 use MexSms\Contracts\SmsVerifyInterface;
 use MexSms\Exceptions\GatewayErrorException;
 use MexSms\Support\Config;
+use MexSms\Support\Helper;
 use MexSms\Support\Message;
 use MexSms\Traits\HelperTrait;
 
@@ -28,9 +31,10 @@ use MexSms\Traits\HelperTrait;
  *
  * @package MexSms
  */
-class MexSms
-{
+class MexSms {
     use HelperTrait;
+
+    const VERSION = '1.5.3';
 
     /**
      * 允许使用的短信平台
@@ -43,8 +47,8 @@ class MexSms
      * @var array
      */
     protected static $gateways = [
-        Gateway::SMS_ALIYUN    =>  \MexSms\Gateways\AliyunGateway::class,
-        Gateway::SMS_LEANCLOUD =>  \MexSms\Gateways\LeanCloudGateway::class,
+        Gateway::SMS_ALIYUN    => \MexSms\Gateways\AliyunGateway::class,
+        Gateway::SMS_LEANCLOUD => \MexSms\Gateways\LeanCloudGateway::class,
     ];
 
     /**
@@ -55,21 +59,23 @@ class MexSms
      */
     public function send(string $toPhoneNumber, int $smsCode = -1) {
         self::checkPhoneNumber($toPhoneNumber);
-
         $config = $this->getConfig();
+        if (!Helper::checkSendLimit($toPhoneNumber, $config)) {
+            return false;
+        }
 
         $this->formatGateways($config);
-
-        $message = new Message(array(
-            'code'  =>  $smsCode
+        $message = new Message(array (
+            'code' => $smsCode
         ));
 
         foreach ($this->allows as $allow) {
-            /**@var GatewayInterface|SmsSendInterface $gateway*/
+            /**@var GatewayInterface|SmsSendInterface $gateway */
             $gateway = app($allow);
             $gateway->setConfig($config);
             $sendResult = $gateway->send($toPhoneNumber, $message, $config);
-            if (false !== $sendResult){
+            if (false !== $sendResult) {
+                Helper::increment($toPhoneNumber);
                 return $sendResult;
             }
         }
@@ -97,7 +103,7 @@ class MexSms
 
         $this->formatGateways($config);
 
-        /**@var GatewayInterface|SmsVerifyInterface $gateway*/
+        /**@var GatewayInterface|SmsVerifyInterface $gateway */
         $gateway = app(self::$gateways[$gatewayName]);
         $gateway->setConfig($config);
         if (method_exists($gateway, 'verify')) {
@@ -113,7 +119,7 @@ class MexSms
      */
     protected function formatGateways(Config $config) {
         $gateways = $config->get('gateways');
-        $allows = array();
+        $allows = array ();
         array_walk($gateways, function ($gatewayName) use (&$allows) {
             if (in_array($gatewayName, array_keys(self::$gateways))) {
                 $allows[] = self::$gateways[$gatewayName];

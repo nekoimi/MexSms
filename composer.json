@@ -3,7 +3,6 @@
     "description": "This is a quick package for using SMS",
     "type": "library",
     "license": "MIT",
-    "minimum-stability": "dev",
     "require": {
         "php": ">=7.0",
         "guzzlehttp/guzzle": "^6.3"

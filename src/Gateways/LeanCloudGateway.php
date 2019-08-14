@@ -34,6 +34,7 @@ class LeanCloudGateway extends AbstractGateway
      * @param MessageInterface $message
      * @param Config $config
      * @return bool|string
+     * @throws \MexSms\Exceptions\LogHandlerNotExistsException
      */
     public function send(string $toPhoneNumber, MessageInterface $message, Config $config)
     {
@@ -41,21 +42,21 @@ class LeanCloudGateway extends AbstractGateway
         $params = $this->formatParams($toPhoneNumber, $config);
         try{
             $result = $this->doPost($request_uri, $params);
-            app('log')->debug(var_export($result, true));
-            app('log')->debug(__CLASS__ . " : 短信发送成功! [ $toPhoneNumber ] ");
+            $this->log()->debug(var_export($result, true));
+            $this->log()->debug(__CLASS__ . " : 短信发送成功! [ $toPhoneNumber ] ");
             return $this->getName();
         }catch (ClientException $ex) {
             $statusCode     =   $ex->getResponse()->getStatusCode();
             $reasonPhrase   =   $ex->getResponse()->getReasonPhrase();
-            app('log')->error(__CLASS__ . " : 短信发送失败! [ {$toPhoneNumber} ] 状态码 : {$statusCode} ; 错误信息 : {$reasonPhrase} ");
+            $this->log()->error(__CLASS__ . " : 短信发送失败! [ {$toPhoneNumber} ] 状态码 : {$statusCode} ; 错误信息 : {$reasonPhrase} ");
             return false;
         }catch (GuzzleException $ex) {
             $reasonPhrase = $ex->getTraceAsString();
-            app('log')->error(__CLASS__ . " : 短信发送失败! [ {$toPhoneNumber} ] 错误信息 : {$reasonPhrase} ");
+            $this->log()->error(__CLASS__ . " : 短信发送失败! [ {$toPhoneNumber} ] 错误信息 : {$reasonPhrase} ");
             return false;
         }catch (\Throwable $ex) {
             $reasonPhrase = $ex->getTraceAsString();
-            app('log')->error(__CLASS__ . " => CatchThrowable : 短信发送失败! [ {$toPhoneNumber} ] 错误信息 : {$reasonPhrase} ");
+            $this->log()->error(__CLASS__ . " => CatchThrowable : 短信发送失败! [ {$toPhoneNumber} ] 错误信息 : {$reasonPhrase} ");
             return false;
         }
 
@@ -68,6 +69,7 @@ class LeanCloudGateway extends AbstractGateway
      * @param $smsCode
      * @param Config $config
      * @return bool
+     * @throws \MexSms\Exceptions\LogHandlerNotExistsException
      */
     public function verify(string $phoneNumber, $smsCode, Config $config): bool
     {
@@ -76,21 +78,21 @@ class LeanCloudGateway extends AbstractGateway
 
         try{
             $result = $this->doPost($request_uri, $params);
-            app('log')->debug(var_export($result, true));
-            app('log')->debug(__CLASS__ . " : 短信验证成功! [ $phoneNumber ] ");
+            $this->log()->debug(var_export($result, true));
+            $this->log()->debug(__CLASS__ . " : 短信验证成功! [ $phoneNumber ] ");
             return true;
         }catch (ClientException $ex) {
             $statusCode     =   $ex->getResponse()->getStatusCode();
             $reasonPhrase   =   $ex->getResponse()->getReasonPhrase();
-            app('log')->error(__CLASS__ . " : 短信验证失败! [ {$phoneNumber} ] 状态码 : {$statusCode} ; 错误信息 : {$reasonPhrase} ");
+            $this->log()->error(__CLASS__ . " : 短信验证失败! [ {$phoneNumber} ] 状态码 : {$statusCode} ; 错误信息 : {$reasonPhrase} ");
             return false;
         }catch (GuzzleException $ex) {
             $reasonPhrase = $ex->getTraceAsString();
-            app('log')->error(__CLASS__ . " : 短信验证失败! [ {$phoneNumber} ] 错误信息 : {$reasonPhrase} ");
+            $this->log()->error(__CLASS__ . " : 短信验证失败! [ {$phoneNumber} ] 错误信息 : {$reasonPhrase} ");
             return false;
         }catch (\Throwable $ex) {
             $reasonPhrase = $ex->getTraceAsString();
-            app('log')->error(__CLASS__ . " => CatchThrowable : 短信验证失败! [ {$phoneNumber} ] 错误信息 : {$reasonPhrase} ");
+            $this->log()->error(__CLASS__ . " => CatchThrowable : 短信验证失败! [ {$phoneNumber} ] 错误信息 : {$reasonPhrase} ");
             return false;
         }
 

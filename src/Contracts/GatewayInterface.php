@@ -15,7 +15,6 @@
  * #    「 涙の雨が頬をたたくたびに美しく 」
  **/
 namespace MexSms\Contracts;
-use MexSms\Support\Config;
 
 /**
  * Interface GatewayInterface

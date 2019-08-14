@@ -15,9 +15,14 @@
  * #    「 涙の雨が頬をたたくたびに美しく 」
  **/
 namespace MexSms\Gateways;
+use MexSms\Contracts\CacheHandlerInterface;
 use MexSms\Contracts\GatewayInterface;
+use MexSms\Contracts\LogHandlerInterface;
 use MexSms\Contracts\SmsSendInterface;
 use MexSms\Contracts\SmsVerifyInterface;
+use MexSms\Exceptions\CacheHandlerNotExistsException;
+use MexSms\Exceptions\LogHandlerNotExistsException;
+use MexSms\Support\Cache;
 use MexSms\Support\Config;
 use MexSms\Traits\HttpRequestTrait;
 /**
@@ -40,6 +45,29 @@ abstract class AbstractGateway implements GatewayInterface, SmsSendInterface, Sm
      * @var int
      */
     protected $timeout;
+
+    /**
+     * Get log handler
+     *
+     * @return LogHandlerInterface
+     * @throws LogHandlerNotExistsException
+     */
+    protected function log(): LogHandlerInterface {
+        $logCls = $this->getConfig()->get('log_handler');
+        if (is_object($logCls)) {
+            $logHandler = $logCls;
+        } else {
+            if (is_null($logCls) || !class_exists($logCls)) {
+                throw new LogHandlerNotExistsException();
+            }
+            $logHandler = new $logCls;
+        }
+        if (! $logHandler instanceof LogHandlerInterface) {
+            throw new LogHandlerNotExistsException();
+        }
+        return $logHandler;
+    }
+
 
     /**
      * @return Config
