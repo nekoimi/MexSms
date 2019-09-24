@@ -71,9 +71,6 @@ class LeanCloudGateway extends AbstractGateway
         $request_uri = $this->formatRequestApi($config, $smsCode);
         $params = $this->formatParams($phoneNumber, $config);
 
-        print_r($request_uri . PHP_EOL);
-        print_r($params);
-
         try{
             $result = $this->doRequest('POST', $request_uri, $params);
             $this->log()->debug(var_export($result, true));
